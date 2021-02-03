@@ -1,3 +1,6 @@
 himl
+numpy
 pyyaml
 tensorflow
+pandas
+sklearn

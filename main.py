@@ -1,7 +1,7 @@
 import yaml
 import logging
 import argparse
-from module import Preprocessor#, Trainer, Predictor
+from module import Preprocessor  #, Trainer, Predictor
 
 if __name__ == "__main__":
     # Arguments
@@ -19,8 +19,12 @@ if __name__ == "__main__":
     with open(args.config, 'r') as config_file:
         try:
             config = yaml.safe_load(config_file)
+
+            # Preprocessing
             preprocessor = Preprocessor(config['preprocessing'], logger)
-            # data_x, data_y, train_x, train_y, validate_x, validate_y, test_x = preprocessor.process()
+            x, y, x_train, y_train, x_val, y_val, x_test = preprocessor.process()
+
+            # Training
             # trainer = Trainer(config['training'], logger, preprocessor.classes)
             # trainer.fit(train_x, train_y)
             # accuracy, cls_report = trainer.validate(validate_x, validate_y)
