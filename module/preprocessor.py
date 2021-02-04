@@ -26,7 +26,7 @@ class Preprocessor(object):
             x_train, x_val = self.__tfidf_vectorization(x_train, x_val)
             x, x_test = self.__tfidf_vectorization(x, x_test)
 
-        return x, y, x_train, x_val, y_train, y_val, x_test
+        return x, y, x_train, y_train, x_val, y_val, x_test
 
     def __load_data(self):
         # Read Training Data

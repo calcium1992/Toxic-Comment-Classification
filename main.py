@@ -1,7 +1,7 @@
 import yaml
 import logging
 import argparse
-from module import Preprocessor  #, Trainer, Predictor
+from module import Preprocessor, Trainer, Predictor
 
 if __name__ == "__main__":
     # Arguments
@@ -25,14 +25,16 @@ if __name__ == "__main__":
             x, y, x_train, y_train, x_val, y_val, x_test = preprocessor.process()
 
             # Training
-            # trainer = Trainer(config['training'], logger, preprocessor.classes)
-            # trainer.fit(train_x, train_y)
-            # accuracy, cls_report = trainer.validate(validate_x, validate_y)
-            # logger.info("accuracy:{}".format(accuracy))
+            trainer = Trainer(config['training'], logger, preprocessor.classes)
+            trainer.fit(x_train, y_train)
+            accuracy, cls_report = trainer.validate(x_val, y_val)
+            logger.info(f"accuracy:{accuracy}")
             # logger.info("\n{}\n".format(cls_report))
-            # model = trainer.fit(data_x, data_y)
-            # predictor = Predictor(config['predict'], logger, model)
-            # probs = predictor.predict_prob(test_x)
-            # predictor.save_result(preprocessor.test_ids, probs)
+
+            # Predicting
+            trainer.fit(x, y)
+            predictor = Predictor(config['predict'], logger, trainer.model)
+            y_prob_pred = predictor.predict_prob(x_test)
+            predictor.save_result(preprocessor.test_ids, y_prob_pred)
         except yaml.YAMLError as err:
             logger.warning(f'Config file err: {err}')

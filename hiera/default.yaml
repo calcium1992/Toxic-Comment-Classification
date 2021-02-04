@@ -1,7 +1,7 @@
 preprocessing:
   split_ratio: 0.3
-  input_trainset: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/mini_train.csv'
-  input_testset: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/mini_test.csv'
+  input_trainset: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/train.csv'
+  input_testset: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/test.csv'
   random_seed: 0
   classes:
     - 'toxic'
@@ -20,4 +20,4 @@ training:
   epochs: 10
   gradient_cliping: True
 predict:
-  output_path: './data/submission.csv'
+  output_path: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/submission.csv'
