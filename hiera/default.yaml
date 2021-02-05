@@ -1,8 +1,4 @@
 preprocessing:
-  split_ratio: 0.3
-  input_trainset: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/train.csv'
-  input_testset: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/test.csv'
-  random_seed: 0
   classes:
     - 'toxic'
     - 'severe_toxic'
@@ -10,8 +6,12 @@ preprocessing:
     - 'threat'
     - 'insult'
     - 'identity_hate'
-  input_text_column: 'comment_text'
+  input_trainset: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/mini_train.csv'
+  input_testset: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/mini_test.csv'
   input_id_column: 'id'
+  input_text_column: 'comment_text'
+  split_ratio: 0.3
+  random_seed: 0
 training:
   learning_rate: 1.0
   dropout_rate: 0.5
@@ -20,4 +20,5 @@ training:
   epochs: 10
   gradient_cliping: True
 predict:
-  output_path: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/submission.csv'
+  output_path: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/mini_submission.csv'
+

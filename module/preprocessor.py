@@ -66,13 +66,16 @@ class Preprocessor(object):
     @staticmethod
     def __count_vectorization(x_train, x_test):
         vectorizer = CountVectorizer(tokenizer=lambda x: x, preprocessor=lambda x: x)
-        vectorized_x_train = vectorizer.fit_transform(x_train)
+        vectorized_x_train = vectorizer.fit_transform(x_train)  # The output is a #sample * #vocab matrix. It uses
+        # sparse matrix to save: (sample i, word j): count value.
         vectorized_x_test = vectorizer.transform(x_test)
         return vectorized_x_train, vectorized_x_test
 
     @staticmethod
     def __tfidf_vectorization(x_train, x_test):
         vectorizer = TfidfVectorizer(tokenizer=lambda x: x, preprocessor=lambda x: x)
-        vectorized_x_train = vectorizer.fit_transform(x_train)
+        vectorized_x_train = vectorizer.fit_transform(x_train)  # The output is a #sample * #vocab matrix. It uses
+        # sparse matrix to save: (sample i, word j): td*idf value. tf = count word in one doc / doc length.
+        # idf = log(#doc / count word in all doc).
         vectorized_x_test = vectorizer.transform(x_test)
         return vectorized_x_train, vectorized_x_test

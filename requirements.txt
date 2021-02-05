@@ -4,3 +4,4 @@ pyyaml
 tensorflow
 pandas
 sklearn
+keras

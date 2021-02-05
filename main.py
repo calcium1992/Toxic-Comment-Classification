@@ -32,8 +32,8 @@ if __name__ == "__main__":
             # logger.info("\n{}\n".format(cls_report))
 
             # Predicting
-            trainer.fit(x, y)
-            predictor = Predictor(config['predict'], logger, trainer.model)
+            final_model = trainer.fit(x, y)
+            predictor = Predictor(config['predict'], logger, final_model)
             y_prob_pred = predictor.predict_prob(x_test)
             predictor.save_result(preprocessor.test_ids, y_prob_pred)
         except yaml.YAMLError as err:

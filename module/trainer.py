@@ -1,6 +1,6 @@
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
-from module. model import NaiveBayes
+from module.model import NaiveBayes, CNN
 
 
 class Trainer(object):
@@ -10,8 +10,9 @@ class Trainer(object):
         self.classes = classes
         self.__create_model(classes)
 
-    def fit(self, x_train, y_train):
-        self.model.fit(x_train, y_train)
+    def fit(self, x_train, y_train, x_val, y_val):
+        self.model.fit(x_train, y_train, x_val, y_val)
+        return self.model
 
     def validate(self, x_val, y_val):
         y_pred = self.model.predict(x_val)
@@ -20,6 +21,8 @@ class Trainer(object):
     def __create_model(self, classes):
         if self.config['model_name'] == 'naivebayes':
             self.model = NaiveBayes(classes)
+        elif self.config['model_name'] == 'cnn':
+            self.model = CNN(classes, self.config)
         else:
             model_name = self.config['model_name']
             self.logger.warning(f'Model {model_name} is not supported yet.')

@@ -8,9 +8,9 @@ preprocessing:
   - identity_hate
   input_convertor: count_vectorization
   input_id_column: id
-  input_testset: /Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/test.csv
+  input_testset: /Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/mini_test.csv
   input_text_column: comment_text
-  input_trainset: /Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/train.csv
+  input_trainset: /Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/mini_train.csv
   random_seed: 0
   split_ratio: 0.3
 training:
@@ -22,4 +22,4 @@ training:
   model_name: naivebayes
   optimizer: sgd
 predict:
-  output_path: /Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/submission.csv
+  output_path: /Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/mini_submission.csv
