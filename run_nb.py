@@ -23,6 +23,7 @@ if __name__ == "__main__":
             # Preprocessing
             preprocessor = Preprocessor(config=config['preprocessing'], logger=logger)
             x, y, x_train, y_train, x_val, y_val, x_test = preprocessor.process()
+            print(x.shape, y.shape, x_train.shape, y_train.shape, x_test.shape)
 
             # Training
             trainer = Trainer(config=config['training'], logger=logger, preprocessor=preprocessor)
