@@ -1,0 +1,8 @@
+preprocessing:
+  input_convertor: 'nn_vectorization'
+  maxlen: 128
+training:
+  model_name: 'cnn'
+  learning_rate: 0.8
+  maxlen: 128
+  embedding_dim: 128

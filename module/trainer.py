@@ -4,11 +4,11 @@ from module.model import NaiveBayes, CNN
 
 
 class Trainer(object):
-    def __init__(self, config, logger, classes):
+    def __init__(self, config, logger, preprocessor):
         self.config = config
         self.logger = logger
-        self.classes = classes
-        self.__create_model(classes)
+        self.preprocessor = preprocessor
+        self.__create_model()
 
     def fit(self, x_train, y_train, x_val, y_val):
         self.model.fit(x_train, y_train, x_val, y_val)
@@ -18,11 +18,11 @@ class Trainer(object):
         y_pred = self.model.predict(x_val)
         return Trainer.__evaluate(y_val, y_pred)
 
-    def __create_model(self, classes):
+    def __create_model(self):
         if self.config['model_name'] == 'naivebayes':
-            self.model = NaiveBayes(classes)
+            self.model = NaiveBayes(self.preprocessor.classes)
         elif self.config['model_name'] == 'cnn':
-            self.model = CNN(classes, self.config)
+            self.model = CNN(self.preprocessor.classes, self.preprocessor.vocab_size, self.config)
         else:
             model_name = self.config['model_name']
             self.logger.warning(f'Model {model_name} is not supported yet.')

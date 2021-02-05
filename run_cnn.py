@@ -21,19 +21,19 @@ if __name__ == "__main__":
             config = yaml.safe_load(config_file)
 
             # Preprocessing
-            preprocessor = Preprocessor(config['preprocessing'], logger)
+            preprocessor = Preprocessor(config=config['preprocessing'], logger=logger)
             x, y, x_train, y_train, x_val, y_val, x_test = preprocessor.process()
 
             # Training
-            trainer = Trainer(config['training'], logger, preprocessor.classes)
-            trainer.fit(x_train, y_train)
+            trainer = Trainer(config=config['training'], logger=logger, preprocessor=preprocessor)
+            trainer.fit(x_train, y_train, x_val, y_val)
             accuracy, cls_report = trainer.validate(x_val, y_val)
             logger.info(f"accuracy:{accuracy}")
             # logger.info("\n{}\n".format(cls_report))
 
             # Predicting
-            final_model = trainer.fit(x, y)
-            predictor = Predictor(config['predict'], logger, final_model)
+            final_model = trainer.fit(x, y, None, None)
+            predictor = Predictor(config=config['predict'], logger=logger, model=final_model)
             y_prob_pred = predictor.predict_prob(x_test)
             predictor.save_result(preprocessor.test_ids, y_prob_pred)
         except yaml.YAMLError as err:
