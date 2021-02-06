@@ -21,16 +21,12 @@ class Preprocessor(object):
 
         input_convertor = self.config.get('input_convertor', None)
         if input_convertor == 'count_vectorization':
-            x_train, x_val = self.__count_vectorization(x_train, x_val)
-            x, x_test = self.__count_vectorization(x, x_test)
+            x_train, x_val, x_test = self.__count_vectorization(x_train, x_val, x_test)
         elif input_convertor == 'tfidf_vectorization':
-            x_train, x_val = self.__tfidf_vectorization(x_train, x_val)
-            x, x_test = self.__tfidf_vectorization(x, x_test)
+            x_train, x_val, x_test = self.__tfidf_vectorization(x_train, x_val, x_test)
         elif input_convertor == 'nn_vectorization':
-            x_train, x_val = self.__nn_vectorization(x_train, x_val, self.config['maxlen'])
-            x, x_test = self.__nn_vectorization(x, x_test, self.config['maxlen'])
+            x_train, x_val, x_test = self.__nn_vectorization(x_train, x_val, x_test)
         else:
-            model_name = self.config['model_name']
             self.logger.warning(f'Input Convertor {input_convertor} is not supported yet.')
 
         return x, y, x_train, y_train, x_val, y_val, x_test
@@ -70,22 +66,24 @@ class Preprocessor(object):
         words = [w.translate(punc_filter) for w in words if len(w.translate(punc_filter))]  # Remove punctuations.
         return words
 
-    def __count_vectorization(self, x_train, x_test):
+    def __count_vectorization(self, x_train, x_val, x_test):
         vectorizer = CountVectorizer(tokenizer=lambda x: x, preprocessor=lambda x: x)
         vectorized_x_train = vectorizer.fit_transform(x_train)  # The output is a #sample * #vocab matrix. It uses
         # sparse matrix to save: (sample i, word j): count value.
+        vectorized_x_val = vectorizer.transform(x_val)
         vectorized_x_test = vectorizer.transform(x_test)
-        return vectorized_x_train, vectorized_x_test
+        return vectorized_x_train, vectorized_x_val, vectorized_x_test
 
-    def __tfidf_vectorization(self, x_train, x_test):
+    def __tfidf_vectorization(self, x_train, x_val, x_test):
         vectorizer = TfidfVectorizer(tokenizer=lambda x: x, preprocessor=lambda x: x)
         vectorized_x_train = vectorizer.fit_transform(x_train)  # The output is a #sample * #vocab matrix. It uses
         # sparse matrix to save: (sample i, word j): td*idf value. tf = count word in one doc / doc length.
         # idf = log(#doc / count word in all doc).
+        vectorized_x_val = vectorizer.transform(x_val)
         vectorized_x_test = vectorizer.transform(x_test)
-        return vectorized_x_train, vectorized_x_test
+        return vectorized_x_train, vectorized_x_val, vectorized_x_test
 
-    def __nn_vectorization(self, x_train, x_test, maxlen):
+    def __nn_vectorization(self, x_train, x_val, x_test):
         def add_word(word2idx_dict, idx2word_dict, word):
             if word in word2idx_dict:
                 return
@@ -111,16 +109,20 @@ class Preprocessor(object):
         self.vocab_size = len(word2idx)
 
         x_train_ids = vectorize(x_train, word2idx)
+        x_val_ids = vectorize(x_val, word2idx)
         x_test_ids = vectorize(x_test, word2idx)
 
         x_train_ids = keras.preprocessing.sequence.pad_sequences(
-            x_train_ids, maxlen=maxlen,
+            x_train_ids, maxlen=self.config['maxlen'],
+            padding='post', value=word2idx['<pad>'])
+        x_val_ids = keras.preprocessing.sequence.pad_sequences(
+            x_val_ids, maxlen=self.config['maxlen'],
             padding='post', value=word2idx['<pad>'])
         x_test_ids = keras.preprocessing.sequence.pad_sequences(
-            x_test_ids, maxlen=maxlen,
+            x_test_ids, maxlen=self.config['maxlen'],
             padding='post', value=word2idx['<pad>'])
 
-        return x_train_ids, x_test_ids
+        return x_train_ids, x_val_ids, x_test_ids
 
 
 

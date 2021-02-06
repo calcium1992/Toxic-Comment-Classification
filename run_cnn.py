@@ -29,7 +29,7 @@ if __name__ == "__main__":
             trainer.fit(x_train, y_train, x_val, y_val)
             accuracy, cls_report = trainer.validate(x_val, y_val)
             logger.info(f"accuracy:{accuracy}")
-            # logger.info("\n{}\n".format(cls_report))
+            logger.info("\n{}\n".format(cls_report))
 
             # Predicting
             predictor = Predictor(config=config['predict'], logger=logger, model=trainer.model)
