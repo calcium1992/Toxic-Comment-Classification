@@ -4,10 +4,11 @@ from module.model import NaiveBayes, CNN
 
 
 class Trainer(object):
-    def __init__(self, config, logger, preprocessor):
+    def __init__(self, config, logger, preprocessor, pretrained_embedding=None):
         self.config = config
         self.logger = logger
         self.preprocessor = preprocessor
+        self.pretrained_embedding = pretrained_embedding
         self.__create_model()
 
     def fit(self, x_train, y_train, x_val, y_val):
@@ -23,6 +24,12 @@ class Trainer(object):
             self.model = NaiveBayes(self.preprocessor.classes)
         elif self.config['model_name'] == 'cnn':
             self.model = CNN(self.preprocessor.classes, self.preprocessor.vocab_size, self.config)
+        elif self.config['model_name'] == 'cnnglove':
+            if self.pretrained_embedding:
+                self.model = CNN(self.preprocessor.classes, self.preprocessor.vocab_size, self.config,
+                                 pretrained_embedding=self.pretrained_embedding)
+            else:
+                self.logger.warning(f'Pretrained embedding is not available.')
         else:
             model_name = self.config['model_name']
             self.logger.warning(f'Model {model_name} is not supported yet.')

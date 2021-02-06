@@ -2,7 +2,7 @@ preprocessing:
   input_convertor: 'nn_vectorization'
   maxlen: 128
 training:
-  model_name: 'cnn'
+  model_name: 'cnnglove'
   learning_rate: 0.8
-  maxlen: 128
   embedding_dim: 128
+  maxlen: 128
