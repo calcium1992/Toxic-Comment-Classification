@@ -12,14 +12,14 @@ class CNN(object):
 
     def fit(self, x_train, y_train, x_val, y_val):
         if x_val is not None:
-            history = self.model.fit(
+            self.model.fit(
                 x=x_train, y=y_train,
                 epochs=self.config['epochs'],
                 verbose=True,
                 validation_data=(x_val, y_val),
                 batch_size=self.config['batch_size'])
         else:
-            history = self.model.fit(
+            self.model.fit(
                 x=x_train, y=y_train,
                 epochs=self.config['epochs'],
                 verbose=True,
@@ -39,7 +39,7 @@ class CNN(object):
                 input_dim=self.vocab_size, output_dim=self.config['embedding_dim'],
                 input_length=self.config['maxlen'],
                 weights=[self.pretrained_embedding],
-                embeddings_initializer='uniform', trainable=True))
+                embeddings_initializer='uniform', trainable=False))
         else:
             model.add(Embedding(
                 input_dim=self.vocab_size, output_dim=self.config['embedding_dim'],
@@ -64,8 +64,8 @@ class CNN(object):
         model.add(Dense(units=self.num_class, activation='sigmoid'))
 
         model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-
         model.summary()
+
         return model
 
 

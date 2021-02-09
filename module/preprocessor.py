@@ -1,4 +1,5 @@
 import re
+import io
 import string
 import numpy as np
 import pandas as pd
@@ -84,29 +85,47 @@ class Preprocessor(object):
         return vectorized_x_train, vectorized_x_val, vectorized_x_test
 
     def __nn_vectorization(self, x_train, x_val, x_test):
+        # Build Vocab
         def add_word(word2idx_dict, idx2word_dict, word):
             if word in word2idx_dict:
-                return
+                return None
             idx = len(word2idx_dict)
             word2idx_dict[word], idx2word_dict[idx] = idx, word
+            return idx
 
+        word2idx, idx2word = {}, {}
+        special_tokens = ['<pad>', '<unk>']
+
+        pretrained_embedding_file = self.config.get('pretrained_embedding_file', None)
+        if pretrained_embedding_file:
+            word2embedding = Preprocessor.__load_embedding_vector(pretrained_embedding_file)
+
+            vocab = list(word2embedding.keys()) + special_tokens
+            for token in special_tokens:
+                word2embedding[token] = np.random.uniform(low=-1, high=1, size=self.config['embedding_dim'])
+
+            self.vocab_size = len(vocab)
+            self.pretrained_embedding = np.zeros(shape=(self.vocab_size, self.config['embedding_dim']))
+            for word in vocab:
+                idx = add_word(word2idx, idx2word, word)
+                if idx is not None:
+                    self.pretrained_embedding[idx] = word2embedding[word]
+        else:
+            for token in special_tokens:
+                add_word(word2idx, idx2word, token)
+
+            for sentence in x_train:
+                for word in sentence:
+                    add_word(word2idx, idx2word, word)
+            self.vocab_size = len(word2idx)
+
+        # Translate Sentences
         def vectorize(dataset, word2idx_dict):
             dataset_ids = []
             for sentence in dataset:
                 ids = [word2idx_dict.get(word, word2idx['<unk>']) for word in sentence]
                 dataset_ids.append(ids)
             return np.array(dataset_ids)
-
-        word2idx, idx2word = {}, {}
-        special_tokens = ['<pad>', '<unk>']
-
-        for token in special_tokens:
-            add_word(word2idx, idx2word, token)
-
-        for sentence in x_train:
-            for word in sentence:
-                add_word(word2idx, idx2word, word)
-        self.vocab_size = len(word2idx)
 
         x_train_ids = vectorize(x_train, word2idx)
         x_val_ids = vectorize(x_val, word2idx)
@@ -123,6 +142,15 @@ class Preprocessor(object):
             padding='post', value=word2idx['<pad>'])
 
         return x_train_ids, x_val_ids, x_test_ids
+
+    @staticmethod
+    def __load_embedding_vector(embedding_file):
+        file = io.open(embedding_file, 'r', encoding='utf-8', newline='\n', errors='ignore')
+        data = {}
+        for line in file:
+            tokens = line.rstrip().split(' ')
+            data[tokens[0]] = np.array(list(map(float, tokens[1:])))
+        return data
 
 
 

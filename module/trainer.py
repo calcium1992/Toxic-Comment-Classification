@@ -1,14 +1,13 @@
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
-from module.model import NaiveBayes, CNN
+from module.model import NaiveBayes, CNN, TransformerClassifier
 
 
 class Trainer(object):
-    def __init__(self, config, logger, preprocessor, pretrained_embedding=None):
+    def __init__(self, config, logger, preprocessor):
         self.config = config
         self.logger = logger
         self.preprocessor = preprocessor
-        self.pretrained_embedding = pretrained_embedding
         self.__create_model()
 
     def fit(self, x_train, y_train, x_val, y_val):
@@ -25,9 +24,15 @@ class Trainer(object):
         elif self.config['model_name'] == 'cnn':
             self.model = CNN(self.preprocessor.classes, self.preprocessor.vocab_size, self.config)
         elif self.config['model_name'] == 'cnnglove':
-            if self.pretrained_embedding:
+            if self.preprocessor.pretrained_embedding is not None:
                 self.model = CNN(self.preprocessor.classes, self.preprocessor.vocab_size, self.config,
-                                 pretrained_embedding=self.pretrained_embedding)
+                                 pretrained_embedding=self.preprocessor.pretrained_embedding)
+            else:
+                self.logger.warning(f'Pretrained embedding is not available.')
+        elif self.config['model_name'] == 'transformer':
+            if self.preprocessor.pretrained_embedding is not None:
+                self.model = TransformerClassifier(self.preprocessor.classes, self.preprocessor.vocab_size, self.config,
+                                                   pretrained_embedding=self.preprocessor.pretrained_embedding)
             else:
                 self.logger.warning(f'Pretrained embedding is not available.')
         else:
