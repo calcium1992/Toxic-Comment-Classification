@@ -24,7 +24,6 @@ if __name__ == "__main__":
             preprocessor = Preprocessor(config=config['preprocessing'], logger=logger)
             x, y, x_train, y_train, x_val, y_val, x_test = preprocessor.process()
 
-            print(x_train.shape, x_val.shape)
             # Training
             trainer = Trainer(config=config['training'], logger=logger, preprocessor=preprocessor)
             trainer.fit(x_train, y_train, x_val, y_val)

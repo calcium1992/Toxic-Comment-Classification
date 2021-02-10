@@ -30,13 +30,11 @@ class Trainer(object):
             else:
                 self.logger.warning(f'Pretrained embedding is not available.')
         elif self.config['model_name'] == 'transformer':
-            self.model = TransformerClassifier(self.preprocessor.classes, self.preprocessor.vocab_size, self.config,
-                                               pretrained_embedding=None)
-            # if self.preprocessor.pretrained_embedding is not None:
-            #     self.model = TransformerClassifier(self.preprocessor.classes, self.preprocessor.vocab_size, self.config,
-            #                                        pretrained_embedding=self.preprocessor.pretrained_embedding)
-            # else:
-            #     self.logger.warning(f'Pretrained embedding is not available.')
+            if self.preprocessor.pretrained_embedding is not None:
+                self.model = TransformerClassifier(self.preprocessor.classes, self.preprocessor.vocab_size, self.config,
+                                                   pretrained_embedding=self.preprocessor.pretrained_embedding)
+            else:
+                self.logger.warning(f'Pretrained embedding is not available.')
         else:
             model_name = self.config['model_name']
             self.logger.warning(f'Model {model_name} is not supported yet.')
