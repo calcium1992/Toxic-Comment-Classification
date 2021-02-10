@@ -1,6 +1,8 @@
+import os
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
 class TokenAndPositionEmbedding(layers.Layer):
@@ -18,7 +20,7 @@ class TokenAndPositionEmbedding(layers.Layer):
                 input_dim=self.vocab_size, output_dim=self.embedding_dim,
                 input_length=self.maxlen, trainable=True)
         # Position Embedding
-        self.pos_emb = layers.Embedding(input_dim=embedding_dim, output_dim=embedding_dim, trainable=True)
+        self.pos_emb = layers.Embedding(input_dim=embedding_dim, output_dim=embedding_dim)
 
     def call(self, x):
         positions = tf.range(start=0, limit=self.maxlen, delta=1)
@@ -35,7 +37,7 @@ class SelfAttention(layers.Layer):
             # the first attention head will generate the first embedding_dim / 2 elements in the output.
             raise ValueError(f'Embedding dimension {embedding_dim} should be divisible by number of heads {num_heads}.')
         self.embedding_dim, self.num_heads = embedding_dim, num_heads
-        self.project_dim = self.embedding_dim / self.num_heads
+        self.project_dim = int(self.embedding_dim / self.num_heads)
         self.query_dense = layers.Dense(units=embedding_dim)
         self.key_dense = layers.Dense(units=embedding_dim)
         self.value_dense = layers.Dense(units=embedding_dim)
@@ -73,8 +75,8 @@ class TransformerEncoder(layers.Layer):
         self.feed_forward = keras.Sequential(
             [layers.Dense(units=feed_forward_dim, activation='relu'), layers.Dense(units=embedding_dim)]
         )
-        self.layer_norm1 = layers.LayerNomralization(epsilon=1e-6)
-        self.layer_norm2 = layers.LayerNomralization(epsilon=1e-6)
+        self.layer_norm1 = layers.LayerNormalization(epsilon=1e-6)
+        self.layer_norm2 = layers.LayerNormalization(epsilon=1e-6)
         self.dropout1 = layers.Dropout(rate=dropout_rate)
         self.dropout2 = layers.Dropout(rate=dropout_rate)
 
@@ -92,7 +94,7 @@ class TransformerEncoder(layers.Layer):
 
 class TransformerClassifier(object):
     def __init__(self, classes, vocab_size, config, pretrained_embedding):
-        self.classes, self.num_class = classes, len(classes)
+        self.classes, self.num_classes = classes, len(classes)
         self.vocab_size = vocab_size
         self.config = config
         self.pretrained_embedding = pretrained_embedding
@@ -141,7 +143,7 @@ class TransformerClassifier(object):
         outputs = layers.Dropout(self.dropout_rate)(outputs)
 
         outputs = layers.Dense(units=self.num_classes, activation=None)(outputs)
-        outputs = layers.Dense(units=self.num_classes, activation='Sigmoid')(outputs)
+        outputs = layers.Dense(units=self.num_classes, activation='sigmoid')(outputs)
 
         model = keras.Model(inputs=inputs, outputs=outputs)
         model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])

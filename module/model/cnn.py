@@ -34,7 +34,7 @@ class CNN(object):
     def __create_model(self):
         model = Sequential()
 
-        if self.pretrained_embedding:
+        if self.pretrained_embedding is not None:
             model.add(Embedding(
                 input_dim=self.vocab_size, output_dim=self.config['embedding_dim'],
                 input_length=self.config['maxlen'],

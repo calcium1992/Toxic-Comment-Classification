@@ -12,7 +12,8 @@ class Preprocessor(object):
     def __init__(self, config, logger):
         self.config = config
         self.logger = logger
-        self.classes = config['classes']
+        self.classes = self.config['classes']
+        self.pretrained_embedding = None
         self.__load_data()
 
     def process(self):

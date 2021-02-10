@@ -4,7 +4,7 @@ preprocessing:
   embedding_dim: 200
   maxlen: 128
 training:
-  model_name: 'cnn'
+  model_name: 'cnnglove'
   learning_rate: 0.8
   embedding_dim: 200
   maxlen: 128
