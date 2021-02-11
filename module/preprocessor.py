@@ -9,9 +9,10 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 
 class Preprocessor(object):
-    def __init__(self, config, logger):
+    def __init__(self, config, logger, rebalance=False):
         self.config = config
         self.logger = logger
+        self.rebalance = rebalance
         self.classes = self.config['classes']
         self.pretrained_embedding = None
         self.__load_data()
@@ -37,14 +38,29 @@ class Preprocessor(object):
         # Read Training Data
         train_df = pd.read_csv(self.config['input_trainset'])
         train_df[self.config['input_text_column']].fillna('unknown', inplace=True)  # Fill blank input text.
-        # train_df['no_class'] = 1 - train_df[self.classes].max(axis=1)  # If none of classes is labeled.
+
+        # Re-balance Data
+        if self.rebalance:
+            positive_df = train_df[train_df[self.classes].max(axis=1) == 1]
+            negative_df = train_df[train_df[self.classes].max(axis=1) == 0]
+            ratio = len(negative_df) // len(positive_df)
+            if ratio >= 2:
+                new_train_df = negative_df.copy()
+                for i in range(ratio):
+                    new_train_df = new_train_df.append(positive_df.copy())
+
+                num_pos, num_neg = len(positive_df), len(negative_df)
+                new_num_pos = len(new_train_df[new_train_df[self.classes].max(axis=1) == 1])
+                new_num_neg = len(new_train_df[new_train_df[self.classes].max(axis=1) == 0])
+                self.logger.info(f'Rebalanced Pos-{num_pos}/Neg-{num_neg} into Pos-{new_num_pos}/Neg-{new_num_neg}.')
+
+                train_df = new_train_df
 
         # Split Validation Set
         self.x, self.y = self.__parse_data(train_df)
         self.x_train, self.x_val, self.y_train, self.y_val = train_test_split(
             self.x, self.y,
             test_size=self.config['split_ratio'], random_state=self.config['random_seed'])
-        # self.y_val = np.delete(self.y_val, -1, 1)  # Remove 'no_class' in validation data.
 
         # Read Test Data
         test_df = pd.read_csv(self.config['input_testset'])
