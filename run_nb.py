@@ -27,8 +27,8 @@ if __name__ == "__main__":
             # Training
             trainer = Trainer(config=config['training'], logger=logger, preprocessor=preprocessor)
             trainer.fit(x_train, y_train, x_val, y_val)
-            accuracy, cls_report = trainer.validate(x_val, y_val)
-            logger.info(f"accuracy:{accuracy}")
+            accuracy, f1, cls_report = trainer.validate(x_val, y_val)
+            logger.info(f"accuracy:{accuracy}, f1: {f1}")
             logger.info("\n{}\n".format(cls_report))
 
             # Predicting

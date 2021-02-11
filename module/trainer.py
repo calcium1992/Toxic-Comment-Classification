@@ -1,5 +1,4 @@
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score, f1_score, classification_report
 from module.model import NaiveBayes, CNN, TransformerClassifier
 
 
@@ -42,5 +41,6 @@ class Trainer(object):
     @staticmethod
     def __evaluate(y_val, y_pred):
         accuracy = accuracy_score(y_val, y_pred)
+        f1 = f1_score(y_val, y_pred, average='samples', zero_division=1)
         cls_report = classification_report(y_val, y_pred, zero_division=1)
-        return accuracy, cls_report
+        return accuracy, f1, cls_report

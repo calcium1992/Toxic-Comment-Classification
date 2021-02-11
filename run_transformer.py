@@ -23,12 +23,13 @@ if __name__ == "__main__":
             # Preprocessing
             preprocessor = Preprocessor(config=config['preprocessing'], logger=logger)
             x, y, x_train, y_train, x_val, y_val, x_test = preprocessor.process()
+            print(x.shape, y.shape, x_train.shape)
 
             # Training
             trainer = Trainer(config=config['training'], logger=logger, preprocessor=preprocessor)
             trainer.fit(x_train, y_train, x_val, y_val)
-            accuracy, cls_report = trainer.validate(x_val, y_val)
-            logger.info(f"accuracy:{accuracy}")
+            accuracy, f1, cls_report = trainer.validate(x_val, y_val)
+            logger.info(f"accuracy:{accuracy}, f1: {f1}")
             logger.info("\n{}\n".format(cls_report))
 
             # Predicting

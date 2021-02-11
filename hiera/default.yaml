@@ -18,7 +18,7 @@ training:
   batch_size: 32
   batch_normalization: True
   optimizer: 'sgd'
-  epochs: 1
+  epochs: 2
   gradient_cliping: True
 predict:
   output_path: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/mini_submission.csv'

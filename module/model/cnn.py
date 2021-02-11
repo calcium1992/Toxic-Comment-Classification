@@ -1,5 +1,6 @@
 from keras.models import Sequential
 from keras.layers import Embedding, Conv1D, MaxPool1D, Flatten, Dense, Dropout
+import keras.backend as K
 
 
 class CNN(object):
@@ -67,7 +68,3 @@ class CNN(object):
         model.summary()
 
         return model
-
-
-
-
