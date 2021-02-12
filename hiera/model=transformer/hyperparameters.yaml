@@ -1,6 +1,6 @@
 preprocessing:
   input_convertor: 'nn_vectorization'
-  pretrained_embedding_file: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments/glove/glove.twitter.27B.200d.txt'
+  pretrained_embedding_file: '/Users/songyihe/Documents/Study/AI Projects/large-datasets/toxic-comments-classification/glove/glove.twitter.27B.200d.txt'
   embedding_dim: 200
   maxlen: 128
 training:
