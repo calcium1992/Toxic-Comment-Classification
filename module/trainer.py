@@ -1,5 +1,5 @@
 from sklearn.metrics import accuracy_score, f1_score, classification_report
-from module.model import NaiveBayes, CNN, TransformerClassifier
+from module.model import NaiveBayes, CNN, RNN, TransformerClassifier
 
 
 class Trainer(object):
@@ -25,6 +25,12 @@ class Trainer(object):
         elif self.config['model_name'] == 'cnnglove':
             if self.preprocessor.pretrained_embedding is not None:
                 self.model = CNN(self.preprocessor.classes, self.preprocessor.vocab_size, self.config,
+                                 pretrained_embedding=self.preprocessor.pretrained_embedding)
+            else:
+                self.logger.warning(f'Pretrained embedding is not available.')
+        elif self.config['model_name'] == 'rnnglove':
+            if self.preprocessor.pretrained_embedding is not None:
+                self.model = RNN(self.preprocessor.classes, self.preprocessor.vocab_size, self.config,
                                  pretrained_embedding=self.preprocessor.pretrained_embedding)
             else:
                 self.logger.warning(f'Pretrained embedding is not available.')

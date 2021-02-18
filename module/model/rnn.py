@@ -1,8 +1,8 @@
 from keras.models import Sequential
-from keras.layers import Embedding, Conv1D, MaxPool1D, Flatten, Dense, Dropout
+from keras.layers import Embedding, LSTM, Flatten, Dense, Dropout
 
 
-class CNN(object):
+class RNN(object):
     def __init__(self, classes, vocab_size, config, pretrained_embedding=None):
         self.classes, self.num_class = classes, len(classes)
         self.vocab_size = vocab_size
@@ -46,16 +46,7 @@ class CNN(object):
                 input_length=self.config['maxlen'],
                 embeddings_initializer='uniform', trainable=True))
 
-        model.add(Conv1D(filters=128, kernel_size=7, activation='relu', padding='same'))
-        model.add(MaxPool1D())
-
-        model.add(Conv1D(filters=256, kernel_size=5, activation='relu', padding='same'))
-        model.add(MaxPool1D())
-
-        model.add(Conv1D(filters=512, kernel_size=3, activation='relu', padding='same'))
-        model.add(MaxPool1D())
-
-        model.add(Flatten())
+        model.add(LSTM(units=512))
 
         model.add(Dense(units=128, activation='relu'))
         model.add(Dropout(0.5))
